@@ -26,6 +26,10 @@ License: GPL-2.0+
 ## Project Structure
 - `plugin/` contains the Joomla plugin files that go into the installable ZIP.
 - `build/` contains the build script and generated archives.
+- `build/output/` contains generated ZIP artifacts.
+- `build/stage/` is a temporary staging area used during packaging.
+- `build.bat` is a Windows shortcut for the PowerShell build script.
+- `.github/workflows/release.yml` publishes tagged releases to GitHub Releases.
 
 ## Build
 Run one of the following from the repository root:
@@ -41,6 +45,31 @@ powershell -ExecutionPolicy Bypass -File .\build\build.ps1
 ```
 
 The generated package is written to `build/output/plg_system_menuintro-v<version>.zip`.
+The version is read from `plugin/menuintro.xml`.
+The ZIP contains the contents of `plugin/` at the archive root, plus `README.md` and `LICENSE.txt`, so it stays Joomla-installable.
+
+## GitHub Releases
+This repository can publish the Joomla installable ZIP automatically through GitHub Actions.
+
+Release flow:
+1. Update the version in `plugin/menuintro.xml`.
+2. Commit and push your changes.
+3. Create a Git tag that matches the manifest version, prefixed with `v`:
+
+```powershell
+git tag v1.0.7
+git push origin v1.0.7
+```
+
+4. GitHub Actions will:
+   - validate that the tag matches the manifest version
+   - run `build/build.ps1`
+   - create or update a GitHub Release for that tag
+   - upload the generated ZIP from `build/output/`
+
+Important:
+- The tag must match the manifest version. Example: tag `v1.0.7` must match manifest version `1.0.7`.
+- The installable ZIP stays out of git history and is distributed through the GitHub Release page instead.
 
 ## Usage
 
