@@ -23,19 +23,38 @@ License: GPL-2.0+
 2. Enable the plugin System - Menu Intro.
 3. (Optional) Switch render mode under the plugin options.
 
+## Project Structure
+- `plugin/` contains the Joomla plugin files that go into the installable ZIP.
+- `build/` contains the build script and generated archives.
+
+## Build
+Run one of the following from the repository root:
+
+```powershell
+.\build.bat
+```
+
+or:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\build\build.ps1
+```
+
+The generated package is written to `build/output/plg_system_menuintro-v<version>.zip`.
+
 ## Usage
 
 ### A) Template mode (clean / manual insert)
 1. Set plugin — Render mode = Template.
 2. In your template, before the main component, add:
-   `php
-      <?php
-        \\Joomla\\CMS\\Plugin\\PluginHelper::importPlugin('system', 'menuintro');
-        if (class_exists('PlgSystemMenuintro')) {
-          PlgSystemMenuintro::renderActiveMenuIntro();
-        }
-      ?>
-   `
+   ```php
+   <?php
+     \Joomla\CMS\Plugin\PluginHelper::importPlugin('system', 'menuintro');
+     if (class_exists('PlgSystemMenuintro')) {
+       PlgSystemMenuintro::renderActiveMenuIntro();
+     }
+   ?>
+   ```
 3. Edit a Menu Item — tab Intro and fill in the fields.
 
 ### B) Auto mode (no template edits)
@@ -46,11 +65,11 @@ License: GPL-2.0+
 ## Styling
 If you add, let's say, 	4-content-intro in the Container CSS class parameter,
 you can put something like the following in your custom CSS:
-`css
+```css
 .t4-content-intro { margin-bottom: 1.5rem; }
 .t4-content-intro .menu-intro__title { margin-bottom: .5rem; }
 .t4-content-intro .menu-intro__content :is(p, ul, ol) { margin-bottom: .75rem; }
-`
+```
 
 ## Changelog
 - 1.0.7 — 2025-10-29: Auto mode — when "Use page title" is ON and "Show title" is enabled, move the page heading before the intro; if a custom title is set, override and use the selected heading tag; avoid duplicate headings.
