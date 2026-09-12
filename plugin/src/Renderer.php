@@ -10,6 +10,35 @@ use Joomla\Component\Content\Site\Helper\RouteHelper as ContentRouteHelper;
 
 class Renderer
 {
+    /** @var array<int, object|null> */
+    private static array $articleCache = [];
+
+    public static function getMenuTextFromMenuParams(\Joomla\Registry\Registry $p): string
+    {
+        if (!(int) $p->get('menuintro_enable', 1)) {
+            return '';
+        }
+
+        $articleId = (int) $p->get('menuintro_article', 0);
+
+        if ($articleId) {
+            $item = self::getArticle($articleId);
+
+            if ($item && trim((string) $item->introtext) !== '') {
+                return (string) $item->introtext;
+            }
+        }
+
+        $custom = (string) $p->get('menuintro_text', '');
+        $textEnabled = (int) $p->get('menuintro_text_enable', 0);
+
+        if ($textEnabled || (!$p->exists('menuintro_text_enable') && trim($custom) !== '')) {
+            return $custom;
+        }
+
+        return '';
+    }
+
     public static function renderFromMenuParams(\Joomla\Registry\Registry $p): string
     {
         if (!(int) $p->get('menuintro_enable', 1)) {
@@ -70,15 +99,8 @@ class Renderer
     private static function renderArticle(int $id): string
     {
         try {
-            $app   = Factory::getApplication();
-            $content = $app->bootComponent('com_content');
-            $factory = $content->getMVCFactory();
-            $model  = $factory->createModel('Article', 'Site', ['ignore_request' => true]);
-
-            // Params/state similar to single article view
-            $model->setState('params', $app->getParams('com_content'));
-            $model->setState('filter.published', [0,1,2]); // allow according to ACL
-            $item = $model->getItem($id);
+            $app = Factory::getApplication();
+            $item = self::getArticle($id);
 
             if (!$item) {
                 return '';
@@ -110,6 +132,50 @@ class Renderer
             return $html;
         } catch (\Throwable $e) {
             return '';
+        }
+    }
+
+    private static function getArticle(int $id): ?object
+    {
+        if (array_key_exists($id, self::$articleCache)) {
+            return self::$articleCache[$id];
+        }
+
+        try {
+            $app = Factory::getApplication();
+            $content = $app->bootComponent('com_content');
+            $factory = $content->getMVCFactory();
+            $model = $factory->createModel('Article', 'Site', ['ignore_request' => true]);
+
+            $model->setState('params', $app->getParams('com_content'));
+
+            $identity = $app->getIdentity();
+            $asset = 'com_content.article.' . $id;
+
+            if (!$identity->authorise('core.edit.state', $asset) && !$identity->authorise('core.edit', $asset)) {
+                $model->setState('filter.published', 1);
+                $model->setState('filter.archived', 2);
+            }
+
+            $item = $model->getItem($id);
+
+            if (!$item) {
+                return self::$articleCache[$id] = null;
+            }
+
+            $viewLevels = array_map('intval', $identity->getAuthorisedViewLevels());
+
+            if (!in_array((int) $item->access, $viewLevels, true)) {
+                return self::$articleCache[$id] = null;
+            }
+
+            if (isset($item->category_access) && !in_array((int) $item->category_access, $viewLevels, true)) {
+                return self::$articleCache[$id] = null;
+            }
+
+            return self::$articleCache[$id] = $item;
+        } catch (\Throwable $e) {
+            return self::$articleCache[$id] = null;
         }
     }
 

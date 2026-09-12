@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" group="system" method="upgrade" version="5.0">
   <name>PLG_SYSTEM_MENUINTRO</name>
-  <author>Kontarinis Andreas — with help from ChatGPT</author>
+  <author>SuperSoft — Kontarinis Andreas</author>
   <authorEmail>ankont@sch.gr</authorEmail>
   <authorUrl>https://superor.wordpress.com/</authorUrl>
   <creationDate>2025-08-27</creationDate>
-  <copyright>© 2025 Kontarinis Andreas — with help from ChatGPT</copyright>
+  <copyright>© 2025-2026 SuperSoft — Kontarinis Andreas</copyright>
   <license>GNU General Public License version 2 or later</license>
-  <version>1.0.7</version>
+  <version>1.0.9</version>
   <description>PLG_SYSTEM_MENUINTRO_DESC</description>
   <element>menuintro</element>
   <files>

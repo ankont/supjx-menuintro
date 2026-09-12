@@ -2,7 +2,7 @@
 /**
  * @package     Joomla.Plugin
  * @subpackage  System.menuintro
- * @copyright   (C) 2025 Kontarinis Andreas — with help from ChatGPT
+ * @copyright   © 2025-2026 SuperSoft — Kontarinis Andreas
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -44,6 +44,42 @@ class PlgSystemMenuintro extends CMSPlugin
         // 3) Δήλωσε το path και φόρτωσε τη δική μας φόρμα
         Form::addFormPath(__DIR__ . '/forms');
         $form->loadFile('menuintro', false);
+    }
+
+    /**
+     * Add resolved intro content to the parameters exposed to mod_menu layouts.
+     */
+    public function onAfterRoute(): void
+    {
+        $app = Factory::getApplication();
+
+        if (!$app->isClient('site')) {
+            return;
+        }
+
+        $items = $app->getMenu()->getItems([], []);
+
+        foreach ($items ?: [] as $item) {
+            $params = $item->getParams();
+            $params->set('menuintro_menu_text', \MenuIntro\Renderer::getMenuTextFromMenuParams($params));
+        }
+    }
+
+    /**
+     * Invalidate resolved menu text when its article or category changes.
+     */
+    public function onContentAfterSave($context, $table, $isNew, $data = []): void
+    {
+        if ($context === 'com_content.article' || $context === 'com_categories.category') {
+            Factory::getCache('mod_menu')->clean();
+        }
+    }
+
+    public function onContentAfterDelete($context, $table): void
+    {
+        if ($context === 'com_content.article' || $context === 'com_categories.category') {
+            Factory::getCache('mod_menu')->clean();
+        }
     }
 
     /**
