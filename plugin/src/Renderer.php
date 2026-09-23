@@ -15,7 +15,10 @@ class Renderer
 
     public static function getMenuTextFromMenuParams(\Joomla\Registry\Registry $p): string
     {
-        if (!(int) $p->get('menuintro_enable', 1)) {
+        if (
+            !(int) $p->get('menuintro_enable', 1)
+            || !(int) $p->get('menuintro_menu_description_enable', 0)
+        ) {
             return '';
         }
 

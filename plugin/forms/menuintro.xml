@@ -32,6 +32,11 @@
 
       <field name="menuintro_article" type="modal_article" label="PLG_SYSTEM_MENUINTRO_ARTICLE" description="PLG_SYSTEM_MENUINTRO_ARTICLE_DESC" default="" showon="menuintro_enable:1" />
 
+      <field name="menuintro_menu_description_enable" type="radio" label="PLG_SYSTEM_MENUINTRO_MENU_DESCRIPTION_ENABLE" description="PLG_SYSTEM_MENUINTRO_MENU_DESCRIPTION_ENABLE_DESC" default="0" layout="joomla.form.field.radio.switcher" showon="menuintro_enable:1">
+        <option value="0">JNO</option>
+        <option value="1">JYES</option>
+      </field>
+
       <!-- Enable: Custom intro text -->
       <field name="menuintro_text_enable" type="radio" label="PLG_SYSTEM_MENUINTRO_TEXT_ENABLE" description="PLG_SYSTEM_MENUINTRO_TEXT_ENABLE_DESC" default="0" layout="joomla.form.field.radio.switcher" showon="menuintro_enable:1" >
         <option value="0">JNO</option>

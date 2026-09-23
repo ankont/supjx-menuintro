@@ -4,7 +4,7 @@ Adds an optional, per-menu-item intro block that renders above the component.
 You can either pick an Article (rendered via Joomla core layout, with edit icons) or enter custom content.
 
 Author: SuperSoft — Kontarinis Andreas
-Version: 1.0.9
+Version: 1.0.11
 Creation date: 2025-08-27
 License: GPL-2.0+
 
@@ -57,8 +57,8 @@ Release flow:
 3. Create a Git tag that matches the manifest version, prefixed with `v`:
 
 ```powershell
-git tag v1.0.9
-git push origin v1.0.9
+git tag v1.0.11
+git push origin v1.0.11
 ```
 
 4. GitHub Actions will:
@@ -68,7 +68,7 @@ git push origin v1.0.9
    - upload the generated ZIP from `build/output/`
 
 Important:
-- The tag must match the manifest version. Example: tag `v1.0.9` must match manifest version `1.0.9`.
+- The tag must match the manifest version. Example: tag `v1.0.11` must match manifest version `1.0.11`.
 - The installable ZIP stays out of git history and is distributed through the GitHub Release page instead.
 
 ## Usage
@@ -92,7 +92,7 @@ Important:
    It will always appear above the component output, regardless of the template structure.
 
 ### C) Menu module helper text
-The plugin adds a resolved `menuintro_menu_text` value to each visible menu item's parameters. It contains the selected article's accessible `introtext`, or the enabled custom intro text as a fallback.
+Enable **Use as menu description** in the menu item's Intro tab to expose a resolved `menuintro_menu_text` value to compatible menu templates. It contains the selected article's accessible `introtext`, or the enabled custom intro text as a fallback. The option is disabled by default and does not affect the normal intro displayed on the page.
 
 In a `mod_menu` template override:
 
@@ -115,6 +115,8 @@ you can put something like the following in your custom CSS:
 ```
 
 ## Changelog
+- 1.0.11 — 2026-09-23: Prevent the home menu intro from appearing on component-only routes without a matching `Itemid`.
+- 1.0.10 — 2026-09-13: Add a per-menu-item option controlling whether intro content is exposed as `menuintro_menu_text`.
 - 1.0.9 — 2026-09-13: Expose accessible article introtext or custom intro text to `mod_menu` layouts through `menuintro_menu_text`.
 - 1.0.8 — 2026-09-12: Enforce the current user's authorised view levels before rendering the selected intro article.
 - 1.0.7 — 2025-10-29: Auto mode — when "Use page title" is ON and "Show title" is enabled, move the page heading before the intro; if a custom title is set, override and use the selected heading tag; avoid duplicate headings.

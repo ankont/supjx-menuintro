@@ -101,6 +101,8 @@ if (Test-Path $licensePath) {
     Copy-Item -Path $licensePath -Destination (Join-Path $pluginStage 'LICENSE.txt') -Force
 }
 
+Get-ChildItem -Path $outputRoot -Filter '*.zip' -File | Remove-Item -Force
+
 $zipPath = Join-Path $outputRoot ("plg_system_menuintro-v{0}.zip" -f $version)
 New-ZipFromDirectoryContents -SourceDirectory $pluginStage -DestinationZip $zipPath
 

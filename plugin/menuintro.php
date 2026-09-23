@@ -95,7 +95,7 @@ class PlgSystemMenuintro extends CMSPlugin
         $doc = $app->getDocument();
         if ($doc->getType() !== 'html') return;
 
-        $menu = $app->getMenu()->getActive();
+        $menu = self::getActiveRequestMenuItem($app);
         if (!$menu) return;
 
         $params = $menu->getParams();
@@ -139,6 +139,26 @@ class PlgSystemMenuintro extends CMSPlugin
         if ($component !== null) {
             $doc->setBuffer($intro . $component, 'component');
         }
+    }
+
+    /**
+     * Return the active menu item only when it belongs to the routed request.
+     */
+    private static function getActiveRequestMenuItem($app): ?object
+    {
+        $itemId = $app->getInput()->getInt('Itemid', 0);
+
+        if ($itemId <= 0) {
+            return null;
+        }
+
+        $active = $app->getMenu()->getActive();
+
+        if (!$active || (int) $active->id !== $itemId) {
+            return null;
+        }
+
+        return $active;
     }
 
     /**
@@ -188,7 +208,7 @@ class PlgSystemMenuintro extends CMSPlugin
         if (!$app->isClient('site')) {
             return;
         }
-        $menu = $app->getMenu()->getActive();
+        $menu = self::getActiveRequestMenuItem($app);
         if (!$menu) {
             return;
         }
